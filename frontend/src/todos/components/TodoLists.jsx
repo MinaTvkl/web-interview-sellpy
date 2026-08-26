@@ -33,6 +33,31 @@ export const TodoLists = ({ style }) => {
     fetchTodoLists().then(setTodoLists)
   }, [])
 
+  const saveTodoList = async (id, { todos }) => {
+    try {
+      const response = await fetch(`http://localhost:3001/todo-lists/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(todos),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Request failed: ${response.status}`)
+      }
+
+      const updatedList = await response.json()
+
+      setTodoLists({
+        ...todoLists,
+        [id]: updatedList,
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   if (!Object.keys(todoLists).length) return null
   return (
     <Fragment>
@@ -55,13 +80,7 @@ export const TodoLists = ({ style }) => {
         <TodoListForm
           key={activeList} // use key to make React recreate component to reset internal state
           todoList={todoLists[activeList]}
-          saveTodoList={(id, { todos }) => {
-            const listToUpdate = todoLists[id]
-            setTodoLists({
-              ...todoLists,
-              [id]: { ...listToUpdate, todos },
-            })
-          }}
+          saveTodoList={saveTodoList}
         />
       )}
     </Fragment>

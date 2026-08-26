@@ -23,4 +23,12 @@ const todoLists = {
 
 app.get('/todo-lists', (req, res) => res.json(todoLists))
 
+app.patch('/todo-lists/:id', (req, res) => {
+  const listId = req.params.id
+  const updatedTodos = req.body
+  
+  todoLists[listId].todos = updatedTodos
+  res.json(todoLists[listId])
+})
+
 app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`))
