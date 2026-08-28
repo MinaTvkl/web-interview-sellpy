@@ -1,5 +1,13 @@
 import React, { useState } from 'react'
-import { TextField, Card, CardContent, CardActions, Button, Typography, Checkbox } from '@mui/material'
+import {
+  TextField,
+  Card,
+  CardContent,
+  CardActions,
+  Button,
+  Typography,
+  Checkbox,
+} from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 
@@ -9,6 +17,15 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
   const handleSubmit = (event) => {
     event.preventDefault()
     saveTodoList(todoList.id, { todos })
+  }
+
+  const handleUpdate = (todoItem, index, updates) => {
+    setTodos([
+      // immutable update
+      ...todos.slice(0, index),
+      { ...todoItem, ...updates },
+      ...todos.slice(index + 1),
+    ])
   }
 
   return (
@@ -28,21 +45,12 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
                 sx={{ flexGrow: 1, marginTop: '1rem' }}
                 label='What to do?'
                 value={todoItem.text}
-                onChange={(event) => {
-                  setTodos([
-                    // immutable update
-                    ...todos.slice(0, index),
-                    {...todoItem, text: event.target.value},
-                    ...todos.slice(index + 1),
-                  ])
-                }}
+                onChange={(event) => handleUpdate(todoItem, index, { text: event.target.value })}
               />
-              <Checkbox checked={todoItem.completed} onChange={() => setTodos([
-                    // immutable update
-                    ...todos.slice(0, index),
-                    {...todoItem, completed: !todoItem.completed},
-                    ...todos.slice(index + 1),
-                  ])}/>
+              <Checkbox
+                checked={todoItem.completed}
+                onChange={() => handleUpdate(todoItem, index, { completed: !todoItem.completed })}
+              />
               <Button
                 sx={{ margin: '8px' }}
                 size='small'
@@ -64,7 +72,7 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
               type='button'
               color='primary'
               onClick={() => {
-                setTodos([...todos, {text: '', completed: false}])
+                setTodos([...todos, { text: '', completed: false }])
               }}
             >
               Add Todo <AddIcon />
