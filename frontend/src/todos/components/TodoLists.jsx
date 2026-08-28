@@ -8,6 +8,7 @@ import {
   ListItemIcon,
   Typography,
 } from '@mui/material'
+import CheckIcon from '@mui/icons-material/Check'
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import { TodoListForm } from './TodoListForm'
 
@@ -32,6 +33,13 @@ export const TodoLists = ({ style }) => {
   useEffect(() => {
     fetchTodoLists().then(setTodoLists)
   }, [])
+
+  const isTodoListCompleted = (todos) => {
+    if (todos.length === 0) {
+      return false
+    }
+    return todos.every((todoItem) => todoItem.completed)
+  }
 
   const saveTodoList = async (id, { todos }) => {
     try {
@@ -71,6 +79,7 @@ export const TodoLists = ({ style }) => {
                   <ReceiptIcon />
                 </ListItemIcon>
                 <ListItemText primary={todoLists[key].title} />
+                {isTodoListCompleted(todoLists[key].todos) && <CheckIcon color='success' />}
               </ListItemButton>
             ))}
           </List>
